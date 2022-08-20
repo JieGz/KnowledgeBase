@@ -1,0 +1,49 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.3'
+}
+
+description = "Luke's knowledge base."
+
+configure(subprojects) { project ->
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    //更改所有子项目的构建输出目录为out目录,适配IDEA
+    buildDir = 'out'
+
+    group 'com.knowledge.base'
+    version version
+    sourceCompatibility = '17'
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    //统一管理项目依赖的版本
+    dependencyManagement {
+        dependencies {
+            dependency 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+            dependency 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+            dependency 'com.google.guava:guava:31.1-jre'
+            dependency 'org.projectlombok:lombok:1.18.24'
+        }
+    }
+
+    dependencies {
+        implementation 'com.google.guava:guava'
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+
+    test {
+        useJUnitPlatform() //支持JUnit5
+    }
+}
