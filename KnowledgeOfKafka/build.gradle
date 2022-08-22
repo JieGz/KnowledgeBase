@@ -1,0 +1,17 @@
+plugins {
+    id 'application'
+}
+
+/**
+ * 为了能够从jar文件启动应用,清单文件MANIFEST.MF需要包含信息头Main-Class.
+ * 下面的配置展示了如何在构建脚本中配置默认值和将头属性添加到JAR文件清单中.
+ */
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.knowledge.base.KafkaProducer'
+    }
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-clients'
+}
