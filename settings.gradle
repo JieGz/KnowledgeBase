@@ -2,4 +2,5 @@ rootProject.name = 'KnowledgeBase'
 include 'KnowledgeOfSpringBoot'
 include 'KnowledgeOfLogAgent'
 include 'KnowledgeOfKafka'
+include 'KnowledgeOfRxJava'
 
