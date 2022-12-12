@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+activate main.go
+main.go -> main.go: 调用开始AgentMonitor()方法,开始LogAgent的监控
+main.go -> main.go: 解析配置里的IP过滤规则,包括需要排除的网卡interface&IP和需要包含的网卡接口&IP,\n并将配置解析成PickRule类型的localHostRule的指针变量里.\n[过滤掉127.0.0.1和192开头和IPV6的IP,本质是保留10开头的内网IP]
+main.go -> main.go: 获取IP,从云主机的所有网卡中,获取一个满足配置规则的IP保存到ip变量中,说白就是保留[10.86.49.119这样的内网IP]
+main.go -> main.go: 根据数据库配置,初始化数据库,并将数据库链接保存到gorm.DB类型的gpGormDB的指针变量里.
+main.go -> main.go: 将第3步中获取到的ip转成一个string类型保存到metrics.Host_Ip中
+main.go -> main.go: 打开pipeline的Debug日志.[pipeline是一个包名]
+main.go -> http_server.go: 如果配置文件配置了metrics服务,则初始化metrics.
+
+activate http_server.go
+http_server.go-> http_server.go: metrics监听的是8899端口,其余配置是一个数组,数组里的每个元数是一个map(key-value).
+http_server.go-> http_server.go: 遍历metrics配置,取出metrics的类型,如果不是counter或guage类型,则直接抛出致命错误.
+http_server.go-> http_server.go: 将配置项解析成一个MetricConf类型保存到并发map->metrics中,\nkey是metrics的名字(hiidotime_stream,appid),value是metric类型.
+main.go -> http_server.go: 通过一个协程,跑起一个metrics http_server,监听着8899端口,并提供三个接口,"/metrics","/health","/hiveUpload"
+main.go -> main.go: 再次调用同一个方法初始化数据库.
+main.go -> storage_metrics.go: 监控信息的存储
+
+activate storage_metrics.go
+storage_metrics.go-> storage_metrics.go: 根据配置文件,如果监控目录不存在则创建,\n并将[/data/log_agent_monitor/metrics.dat]保存到GlobleFilePath的字符串变量中
+storage_metrics.go-> storage.go: 通过回调的方式读取metrics.dat里面的内容[appid{stage="read",act="webappsinstallflow",appid="66970"} 2 1667462640000],然后解析文件,接着就看麻了.
+storage_metrics.go-> storage_metrics.go: 启一个协程,每10秒将metrics里的内容刷到metrics.dat中,先写入metrics.dat.tmp中,然后重命名.
+
+@enduml
