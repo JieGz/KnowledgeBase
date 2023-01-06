@@ -1,0 +1,7 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation 'com.google.flatbuffers:flatbuffers-java:22.12.06'
+}

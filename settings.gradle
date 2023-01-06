@@ -3,4 +3,6 @@ include 'KnowledgeOfSpringBoot'
 include 'KnowledgeOfLogAgent'
 include 'KnowledgeOfKafka'
 include 'KnowledgeOfRxJava'
+include 'KnowledgeOfFlatBuffers'
+include 'KnowledgeOfPrometheus'
 
