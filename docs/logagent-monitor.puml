@@ -24,4 +24,5 @@ storage_metrics.go-> storage_metrics.go: 根据配置文件,如果监控目录�
 storage_metrics.go-> storage.go: 通过回调的方式读取metrics.dat里面的内容[appid{stage="read",act="webappsinstallflow",appid="66970"} 2 1667462640000],然后解析文件,接着就看麻了.
 storage_metrics.go-> storage_metrics.go: 启一个协程,每10秒将metrics里的内容刷到metrics.dat中,先写入metrics.dat.tmp中,然后重命名.
 
+
 @enduml

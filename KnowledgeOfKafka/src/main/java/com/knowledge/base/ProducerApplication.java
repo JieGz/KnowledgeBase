@@ -1,6 +1,5 @@
 package com.knowledge.base;
 
-import cn.hutool.core.util.NumberUtil;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -21,22 +20,12 @@ public class ProducerApplication {
 
     public static void main(String[] args) throws InterruptedException {
 
-        System.out.println(NumberUtil.isNumber("01"));
-        System.out.println(Integer.valueOf("01"));
-        System.out.println(NumberUtil.isNumber("akg"));
-        System.out.println(NumberUtil.isNumber(null));
-        System.out.println(NumberUtil.isNumber("10"));
-        System.out.println(NumberUtil.isNumber("5"));
-        System.out.println(NumberUtil.isNumber("1000"));
-
         final Properties properties = new Properties();
 
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-joyytest-fs002-core001.duowan.com:8101,kafka-joyytest-fs002-core002.duowan.com:8101,kafka-joyytest-fs002-core003.duowan.com:8101");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "sl-fs-test001-001.inshopline.com:8124,sl-fs-test001-002.inshopline.com:8124,sl-fs-test001-002.inshopline.com:8124");
 
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-        final String name = MyPartitioner.class.getName();
-        System.out.println(name);
         //指定分区
         properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CdcPartitioner.class.getName());
 
@@ -54,16 +43,10 @@ public class ProducerApplication {
         properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
         final KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties);
-        System.out.println("-------------------------->1");
-
-        for (int i = 0; i < 10000; i++) {
-            String content = "127.0.0.1&act=websdkprotocol&" + "这是第" + i + "条消息";
+        for (int i = 60; i < 90; i++) {
+            String content = "这是第" + i + "条消息";
             final ProducerRecord<byte[], byte[]> message;
-            if (i % 5 == 0) {
-                message = new ProducerRecord<>("hiido_web_dashboard", content.getBytes(StandardCharsets.UTF_8));
-            } else {
-                message = new ProducerRecord<>("hiido_web_dashboard", String.valueOf(i).getBytes(StandardCharsets.UTF_8), content.getBytes(StandardCharsets.UTF_8));
-            }
+            message = new ProducerRecord<>("test", String.valueOf(i).getBytes(StandardCharsets.UTF_8), content.getBytes(StandardCharsets.UTF_8));
             producer.send(message, new Callback() {
                 @Override
                 public void onCompletion(RecordMetadata metadata, Exception exception) {

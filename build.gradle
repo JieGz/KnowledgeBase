@@ -36,11 +36,15 @@ configure(subprojects) { project ->
             dependency 'org.projectlombok:lombok:1.18.24'
             dependency 'org.apache.kafka:kafka-clients:3.2.1'
             dependency 'io.reactivex.rxjava3:rxjava:3.1.5'
+            dependency 'cn.hutool:hutool-all:5.8.15'
+            dependency 'com.alibaba.fastjson2:fastjson2:2.0.26'
         }
     }
 
     dependencies {
         implementation 'com.google.guava:guava'
+        implementation 'com.alibaba.fastjson2:fastjson2'
+        implementation 'cn.hutool:hutool-all'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
     }

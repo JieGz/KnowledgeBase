@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+activate logshipper.go
+logshipper.go -> logshipper.go: 当读到lugu落盘日志文件时,会调用Write()方法
+logshipper.go -> logshipper.go: 启动一个计时器ticker,会根据用户配置的打包间隔进行触发打包行为(flush),打包,清理pkg buffer,然后写入packers把所有的写入channel发送给下一个kafka插件
+logshipper.go -> logshipper.go: logagent插件的标准处理行为,如果上游关闭就退出当前插件,然后处理信息号控制
+logshipper.go -> logshipper.go: getPacker(): 通过logshipper配置参数,以及lugu日志文件路径生成一个ShoplinePackage的打包器,并保存到\npackers中,一个文件对应一个打包器,当文件删除的时候会清理这个打包器,并返回这个打包器
+logshipper.go -> shopline_package.go: PackOne(): 将lugu数据的封装data(pipeline.Data)作为参数调用PackOne().
+
+activate shopline_package.go
+shopline_package.go -> lugu.go: Parse(): 将lugu数据的封装作业data作为参数调用Parse()解析方法,Parse()方法内部调用了lugu.Load方法,\n参数为lugu原文(data.Content)
+
+activate lugu.go
+lugu.go -> lugu.go: Load(): 参数是lugu明文文本
+lugu.go -> lugu.go: Load(): 通过逗号对文本进行切分,会得到至少5个部份,\n因为lugu文本的协议是(IP,状态(200),序号(00),埋点内容(Query),保留字段(_)),\n如果切分后的元素小于5则会报错
+lugu.go -> shopline_package.go: Load(): 通过lugu明文查询hiido_time字段,并将hiido_time取出来,并把lugu明文的按协议(五部份),解析到line中
+
+activate shopline_package.go
+shopline_package.go -> shopline_package.go: 调用ParseQuery()解析埋点内容,本质上就是说埋点的内容通过&进行分割,转成一个map并返回,记录在query变量中.
+shopline_package.go -> shopline_package.go: 在埋点内容的明文map中,补充ip的键值对.query["ip"] = string(line.Ip)
+shopline_package.go -> shopline_package.go: 返回map给到PackOne,并保存在line中.
+shopline_package.go -> shopline_package.go: 将map追加到ShoplinePackage的Datas中,lastPackTime为当前时间,并调用packMeta方法(打包元数据)
+shopline_package.go -> shopline_package.go: 从data.meta中获取*record.Record, 如果是第一个数据直接记录到ShoplinePackage的Meta,或者更新bytes,lines,和record字段
+
+activate logshipper.go
+logshipper.go -> shopline_package.go: Flush(): 获取打包间间隔时间,如果ShoplinePack的size满了,或者是到了到了打包的间隔时间调用flush()方法
+
+activate shopline_package.go
+shopline_package.go -> shopline_package.go: flush(): 调用toByte()方法
+shopline_package.go -> shopline_package.go: toByte(): 如Datas为空,返回nil,nil, 获取机器的IP,并写入pkg.Ip中,将当前的时间戳写入pkg.Timestamp,\n将pkg进行json序列化并返回
+shopline_package.go -> logshipper.go: 用序列化后的json内容和pkg的meta生成一个pipeline.Data->data, 并在data中写入一个kafka_key,用于均匀分布kafka,清理pkg的这个buffer,并返回
+
+activate logshipper.go
+logshipper.go -> logshipper.go: 将返回的data写入channel中,给到下一个kafka插件进行发送
+
+@enduml
