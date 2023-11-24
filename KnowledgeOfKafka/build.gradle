@@ -15,4 +15,5 @@ jar {
 dependencies {
     implementation 'org.apache.kafka:kafka-clients'
     implementation 'cn.hutool:hutool-all:5.8.10'
+    implementation(project(":KnowledgeOfLog"))
 }

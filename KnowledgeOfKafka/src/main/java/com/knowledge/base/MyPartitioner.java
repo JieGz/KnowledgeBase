@@ -15,7 +15,8 @@ public class MyPartitioner implements Partitioner {
 
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-        if (key instanceof String strPartition) {
+        if (key instanceof String) {
+            String strPartition = (String) key;
             final int size = cluster.partitionsForTopic(topic).size();
             try {
                 final int partition = Integer.parseInt(strPartition);

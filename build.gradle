@@ -13,7 +13,7 @@ configure(subprojects) { project ->
 
     group 'com.knowledge.base'
     version version
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenLocal()

@@ -3,9 +3,8 @@
 
 autonumber
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+activate main.go
+main.go -> main.go: 解析配置文件,对服务治理平台的配置文件进行解析,核心是一个cmd参数配置,默认为main,表示启动logAgent的核心服务.\n a. 确认目录的位置在../log \n b. 默认的配置文件路径为../conf/config.toml\n c. 将配置文件解析到conf.go中.\n d. 根据解析的cmd命令判断是启动logAgent服务,还是启动watermark服务
+main.go --> main.go: 如果启动的是logAgent服务,则会调用runMain()方法,
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
 @enduml

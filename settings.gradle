@@ -5,4 +5,8 @@ include 'KnowledgeOfKafka'
 include 'KnowledgeOfRxJava'
 include 'KnowledgeOfFlatBuffers'
 include 'KnowledgeOfPrometheus'
+include 'KnowledgeOfConfig'
+include 'KnowledgeOfConfig'
+include 'KnowledgeOfLog'
+include 'KnowledgeOfLog4j2'
 

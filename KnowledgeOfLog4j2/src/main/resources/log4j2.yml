@@ -1,0 +1,84 @@
+configuration:
+  status: warn
+  name: Log4j2DemoConfiguration
+  properties:
+    property:
+      - name: filename
+        value: /Users/luke/Downloads/log4j2/log4j2-yml.log
+      - name: asyncFilename
+        value: /Users/luke/Downloads/log4j2/log4j2-async-yml.log
+      - name: rollingFilename
+        value: /Users/luke/Downloads/log4j2/linkhub-rolling-file.log
+  thresholdFilter:
+    level: debug
+
+  appenders:
+    console: #有固定的写法，看AbstractOutputStreamAppender类的实例上的@Plugin中的name字段【大小写均可】
+      name: lukeConsole
+      target: SYSTEM_OUT
+      patternLayout:
+        pattern: "%d{ISO8601} %blue{[%t]} %yellow{%-5level:} %green{%msg%n%throwable}"
+    file: #有固定的写法，看AbstractOutputStreamAppender类的实例上的@Plugin中的name字段【大小写均可】
+      name: lukeFile
+      fileName: ${filename}
+      PatternLayout:
+        Pattern: "%d %p %C{1.} [%t] %m%n"
+    randomAccessFile: #有固定的写法，看AbstractOutputStreamAppender类的实例上的@Plugin中的name字段【大小写均可】
+      name: lukeAsyncLog
+      fileName: ${asyncFilename}   #需要单独的文件，否则会报错
+      immediateFlush: false
+      append: false
+      PatternLayout:
+        Pattern: "%d %p %class{1.} [%t] %location %m %ex%n"
+    rollingFile:
+      name: lukeRollingFile
+      fileName: ${rollingFilename}
+      filePattern: logs/$${date:yyyy-MM-dd hh}/${rollingFilename}-%d{yyyy-MM-dd-HH}-%i.log.gz
+      PatternLayout:
+        Pattern: "%d %p %class{1.} [%t] %location %m %ex%n"
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 6
+          modulate: true
+        SizeBasedTriggeringPolicy:
+          size: 10KB
+      DefaultRolloverStrategy:
+        max: 20
+
+
+
+  loggers:
+    root:
+      level: info
+      appenderRef: # AppenderRef是一个数组,数组的每个元数包含三个字段:ref/level/filter
+        - ref: lukeConsole
+        - ref: lukeFile
+        - ref: lukeAsyncLog
+    logger: #对应的实例类是LoggerConfig, 这个logger的名字是在@Plugin中的name字段决定的
+      - name: com.knowledge.Main
+        level: debug
+        additivity: false
+        appenderRef: #对应的实体类是: AppenderRef,从LoggerConfig中可以得知他是一个组数,这个appenderRef名字是在@Plugin中的name字段决定的
+          ref: lukeConsole
+      - name: com.knowledge.Other
+        level: warn
+        additivity: false
+        appenderRef: # AppenderRef是一个数组,数组的每个元数包含三个字段:ref/level/filter
+          - ref: lukeFile
+          - ref: lukeConsole
+            level: error
+      - name: com.knowledge.RollingFileOperator
+        level: info
+        additivity: false
+        appenderRef:
+          ref: lukeRollingFile
+    asyncLogger: # 异步logger,对应的实例类是AsyncLoggerConfig,名字asyncLogger是在@Plugin中的name字段决定的,它也是继承自LoggerConfig,需要引入Disruptor组件
+      # 异步logger不要记录行号，否则性能会下降30倍
+      - name: com.knowledge.AsyncLogOperator
+        level: info
+        additivity: false
+        appenderRef:
+          - ref: lukeAsyncLog
+          - ref: lukeConsole
+
+

@@ -7,15 +7,21 @@ package com.knowledge.base;
 public class KnowledgeOfRxJava {
 
     public static void main(String[] args) {
+        Integer num = null;
+        try {
+            test(num);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
-        final Thread thread = new Thread(() -> {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("shutdown!");
-            }));
-        });
-
-        thread.setDaemon(false);
-        thread.start();
+    public static void test(int a) {
+        if (a == 1) {
+            System.out.println(1);
+        } else if ( a== 2){
+            System.out.println(2);
+        }
+        System.out.println("6666");
     }
 }
