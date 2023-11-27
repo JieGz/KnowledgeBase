@@ -33,13 +33,13 @@ configuration:
     rollingFile:
       name: lukeRollingFile
       fileName: ${rollingFilename}
-      filePattern: logs/$${date:yyyy-MM-dd hh}/${rollingFilename}-%d{yyyy-MM-dd-HH}-%i.log.gz
+      filePattern: /Users/luke/Downloads/log4j2/logs/$${date:yyyy-MM-dd hh}/linkhub-rolling-file-%d{yyyy-MM-dd-HH}-%i.log.gz
       PatternLayout:
         Pattern: "%d %p %class{1.} [%t] %location %m %ex%n"
       Policies:
         TimeBasedTriggeringPolicy:
-          interval: 6
-          modulate: true
+          interval: 1
+          unit: hour
         SizeBasedTriggeringPolicy:
           size: 10KB
       DefaultRolloverStrategy:
