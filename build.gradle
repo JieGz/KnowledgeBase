@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.3'
+    id 'org.springframework.boot' version '2.7.10'
 }
 
 description = "Luke's knowledge base."
@@ -38,6 +38,9 @@ configure(subprojects) { project ->
             dependency 'io.reactivex.rxjava3:rxjava:3.1.5'
             dependency 'cn.hutool:hutool-all:5.8.15'
             dependency 'com.alibaba.fastjson2:fastjson2:2.0.26'
+            dependency 'org.springframework.boot:spring-boot-starter-web:2.7.3'
+            dependency 'org.apache.dubbo:dubbo-bom:3.2.9'
+            dependency 'com.alibaba.nacos:nacos-client:2.2.1'
         }
     }
 

@@ -1,11 +1,7 @@
 package org.knowledge;
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigBeanFactory;
 import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigList;
-
-import java.util.List;
 
 /**
  * @author jieguangzhi
@@ -15,6 +11,7 @@ public class Main {
     public static void main(String[] args) {
         final Config config = ConfigFactory.load("application.conf");
 
-
+        final String format = String.format("GET-/a/b/c/%s", 10086);
+        System.out.println(format);
     }
 }
