@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: KnowledgeBaseOfConsumer
+
+server:
+  port: 8081
+
+dubbo:
+  application:
+    name: demo-jdp-consumer
+  provider:
+    token: false
+  protocol:
+    name: dubbo
+    port: 21668
+  registry:
+    address: nacos://nacos-test-fs.inshopline.com:6801?namespace=test

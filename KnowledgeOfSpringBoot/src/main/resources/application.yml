@@ -1,6 +1,12 @@
 spring:
   application:
     name: KnowledgeBaseApplication
+  messages:
+    basename: i18n/tips
+    encoding: UTF-8
 
 server:
   port: 8080
+
+lang:
+  open: true
